@@ -2,10 +2,11 @@
 
 This package parses configuration files formatted like this:
 
+	# comment
 	server {
 		listen :2525
 		relay
-		hostname home.loc
+		hostname home.loc # comment
 	}
 
 	users {

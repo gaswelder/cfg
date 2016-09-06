@@ -3,6 +3,7 @@ package cfg
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 )
 
 type section map[string]string
@@ -14,10 +15,11 @@ func ParseFile(path string) (cfg config, err error) {
 	if err != nil {
 		return
 	}
+	text := stripComments(string(src))
 
 	cfg = make(config)
 
-	b := newScanner(string(src))
+	b := newScanner(text)
 	for {
 		skipSpaces(b)
 		if !b.more() {
@@ -33,6 +35,18 @@ func ParseFile(path string) (cfg config, err error) {
 		cfg[name] = sec
 	}
 	return
+}
+
+// Removes comments from the text
+func stripComments(s string) string {
+	lines := strings.Split(s, "\n")
+	for k, line := range lines {
+		pos := strings.Index(line, "#")
+		if pos >= 0 {
+			lines[k] = lines[k][:pos]
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 func readSection(b *scanner) (name string, sec section, err error) {
